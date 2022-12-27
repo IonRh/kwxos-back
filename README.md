@@ -9,5 +9,5 @@ https://raw.githubusercontents.com/kwxos/kwxos-back/main/Header-Editor/HE-Google
 
 ### 🎉 VPSroot 密码更改
 ```
-wget -N https://raw.githubusercontents.com/kwxos/kwxos-back/main/VPSroot/root.sh bash root.sh
+wget -N https://raw.githubusercontents.com/kwxos/kwxos-back/main/VPSroot/root.sh && bash root.sh
 ```
