@@ -16,9 +16,9 @@ echo -e "${bblue} ░██ ██       ${plain} ░██ ██        ░█
 echo -e "${bblue} ░██ ░${plain}██       ░██ ░██       ░██ ░██          ░${red}██         ░██    ░░██${plain}"
 echo -e "${bblue} ░${plain}██  ░░██     ░██  ░░██     ░██  ░░${red}██        ░██          ░██ ██ ██${plain} "
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
-white "静雨安蝉导航页 ：https://kwxos.top"
-white "静雨·安蝉Github：https://gitlab.com/kwxos"
-white "静雨·安蝉博客 ：https://blog.kwxos.top"
+white "甬哥Gitlab项目  ：gitlab.com/rwkgyg"
+white "甬哥blogger博客 ：ygkkk.blogspot.com"
+white "甬哥YouTube频道 ：www.youtube.com/c/甬哥侃侃侃kkkyg"
 yellow "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 [[ $EUID -ne 0 ]] && su='sudo' 
 lsattr /etc/passwd /etc/shadow >/dev/null 2>&1
