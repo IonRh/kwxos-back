@@ -2,4 +2,4 @@
 
 ### 🎉 Header Editor 规则
 ```
-https://raw.githubusercontents.com/kwxos/backup/main/Header-Editor/HE-GoogleRedirect.json
+https://raw.githubusercontents.com/kwxos/kwxos-back/main/Header-Editor/HE-GoogleRedirect.json
