@@ -10,7 +10,7 @@ https://raw.githubusercontents.com/kwxos/kwxos-back/main/Header-Editor/HE-Google
 ```
 2. Fack to newbing
 ```
-https://raw.githubusercontents.com/kwxos/kwxos-back/main/Header-Editor/HE-GoogleRedirect.json
+https://raw.githubusercontents.com/kwxos/kwxos-back/main/Header-Editor/google-bing.json
 ```
 ### 🎉 VPSroot 密码更改
 ```
