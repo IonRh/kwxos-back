@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # 哪吒的三个参数
-NEZHA_SERVER=${NEZHA_SERVER}
-NEZHA_PORT=${NEZHA_PORT}
-NEZHA_KEY=${NEZHA_KEY}
+NEZHA_SERVER=nezha-kwxos.fly.dev
+NEZHA_PORT=5555
+NEZHA_KEY=9WS10Zf7Le7KKpiLeI
 
 # 三个变量不全则不安装哪吒客户端
 check_variable() {
