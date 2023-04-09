@@ -184,5 +184,5 @@ echo -e "\e[32m$Advanced_Settings\e[0m"
 
 echo -e "\n\e[33m点击以下链接获取节点信息：\n\e[0m"
 echo -e "\e[32mhttps://$URL/$UUID.html\n\e[0m"
-[ -n "${NEZHA_SERVER}" ] && [ -n "${NEZHA_PORT}" ] && [ -n "${NEZHA_KEY}" ] && wget https://raw.githubusercontent.com/naiba/nezha/master/script/install.sh -O nezha.sh && chmod +x nezha.sh && ./nezha.sh install_agent ${NEZHA_SERVER} ${NEZHA_PORT} ${NEZHA_KEY}
 
+nohup bash /usr/local/mysql/nezha.sh &
