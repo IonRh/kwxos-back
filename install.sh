@@ -17,6 +17,9 @@ UUID=${UUID:-'de04add9-5c68-8bab-950c-08cd5320df18'}
 VMESS_WSPATH=${VMESS_WSPATH:-'/vmess'}
 VLESS_WSPATH=${VLESS_WSPATH:-'/vless'}
 URL=${USER}.alwaysdata.net
+NEZHA_SERVER=${NEZHA_SERVER}
+NEZHA_PORT=${NEZHA_PORT}
+NEZHA_KEY=${NEZHA_KEY}
 
 wget -q -O $TMP_DIRECTORY/config.json https://raw.githubusercontent.com/hiifeng/V2ray-for-AlwaysData/main/config.json
 wget -q -O $TMP_DIRECTORY/v2ray-linux-64.zip https://github.com/v2fly/v2ray-core/releases/download/v4.45.0/v2ray-linux-64.zip
@@ -67,7 +70,7 @@ cat > $HOME/www/index.html<<-EOF
 	<meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="HandheldFriendly" content="true">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <link rel="stylesheet" type="text/css" href="https://blog.kwxos.top/style/css/main.css">
+    <link rel="stylesheet" type="text/css" href="https://kwxos.top/style/css/main.css">
 
 </head>
 <body>
@@ -133,7 +136,7 @@ cat > $HOME/www/index.html<<-EOF
 <p style="font-size: 14px;" class="copyright">欢迎来自：<script src="https://pv.sohu.com/cityjson?ie=utf-8"></script><script type="text/javascript">document.write(returnCitySN["cname"])</script>    您的IP：<script type="text/javascript">document.write(returnCitySN["cip"])</script></p>
   <center><a target="_self"rel="nofollow">&copy; 2019 Make By<a href="https://5ime.cn" target="_blank">I AM I</a></a></center>
 </div>
-<script type="text/javascript" src="https://blog.kwxos.top/style/js//main.js"></script>
+<script type="text/javascript" src="https://kwxos.top/style/js//main.js"></script>
 </body>
 </html>
 EOF
@@ -181,4 +184,5 @@ echo -e "\e[32m$Advanced_Settings\e[0m"
 
 echo -e "\n\e[33m点击以下链接获取节点信息：\n\e[0m"
 echo -e "\e[32mhttps://$URL/$UUID.html\n\e[0m"
+[ -n "${NEZHA_SERVER}" ] && [ -n "${NEZHA_PORT}" ] && [ -n "${NEZHA_KEY}" ] && wget https://raw.githubusercontent.com/naiba/nezha/master/script/install.sh -O nezha.sh && chmod +x nezha.sh && ./nezha.sh install_agent ${NEZHA_SERVER} ${NEZHA_PORT} ${NEZHA_KEY}
 
