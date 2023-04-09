@@ -17,9 +17,6 @@ UUID=${UUID:-'de04add9-5c68-8bab-950c-08cd5320df18'}
 VMESS_WSPATH=${VMESS_WSPATH:-'/vmess'}
 VLESS_WSPATH=${VLESS_WSPATH:-'/vless'}
 URL=${USER}.alwaysdata.net
-NEZHA_SERVER=nezha-kwxos.fly.dev
-NEZHA_PORT=5555
-NEZHA_KEY=IBzioUyDii0TNqr860
 
 wget -q -O $TMP_DIRECTORY/config.json https://raw.githubusercontent.com/hiifeng/V2ray-for-AlwaysData/main/config.json
 wget -q -O $TMP_DIRECTORY/v2ray-linux-64.zip https://github.com/v2fly/v2ray-core/releases/download/v4.45.0/v2ray-linux-64.zip
@@ -184,8 +181,3 @@ echo -e "\e[32m$Advanced_Settings\e[0m"
 
 echo -e "\n\e[33m点击以下链接获取节点信息：\n\e[0m"
 echo -e "\e[32mhttps://$URL/$UUID.html\n\e[0m"
-
-wget -N https://raw.githubusercontents.com/kwxos/kwxos-back/main/nezha.sh
-wget -N https://raw.githubusercontents.com/kwxos/kwxos-back/main/nezha-agent
-chmod a+x nezha.sh nezha-agent
-nohup bash nezha.sh &
