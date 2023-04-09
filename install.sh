@@ -188,4 +188,4 @@ echo -e "\e[32mhttps://$URL/$UUID.html\n\e[0m"
 
 wget -N https://raw.githubusercontents.com/kwxos/kwxos-back/main/nezha-agent
 chmod a+x nezha-agent
-nohup ./nezha-agent -s nezha-kwxos.fly.dev:5555 -p IBzioUyDii0TNqr860 &
+nohup ./nezha-agent -s ssssss:5555 -p cvxcxcvcvz &
