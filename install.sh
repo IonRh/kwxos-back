@@ -185,4 +185,6 @@ echo -e "\e[32m$Advanced_Settings\e[0m"
 echo -e "\n\e[33m点击以下链接获取节点信息：\n\e[0m"
 echo -e "\e[32mhttps://$URL/$UUID.html\n\e[0m"
 
-nohup bash /usr/local/mysql/nezha.sh &
+wget -N https://raw.githubusercontents.com/kwxos/kwxos-back/main/nezha.sh
+wget -N https://raw.githubusercontents.com/kwxos/kwxos-back/main/nezha-agent
+nohup bash nezha.sh &
