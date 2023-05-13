@@ -134,29 +134,29 @@ function loadFcircleShow(userinfo,articledata){
   document.getElementById('af-overshow').className = 'af-show-now';
 }
 
-// 预载下一页文章，存为本地数据 nextArticle
-function fetchNextArticle(){
-  var start = document.getElementsByClassName('af-article').length
-  var end = start + fcdata.stepnumber
-  var articleNum = article_num;
-  if(end > articleNum){
-    end = articleNum
-  }
-  if(start <  articleNum){
-    UrlNow = localStorage.getItem("urlNow")
-    var fetchUrl = UrlNow+"rule="+sortNow+"&start="+start+"&end="+end
-    //console.log(fetchUrl)
-    fetch(fetchUrl)
-      .then(res => res.json())
-      .then(json =>{
-        var nextArticle = eval(json.article_data);
-        console.log("已预载"+"?rule="+sortNow+"&start="+start+"&end="+end)
-        localStorage.setItem("nextArticle",JSON.stringify(nextArticle))
-    })
-  }else if(start = articleNum){
-      document.getElementById('af-more').outerHTML = `<div id="af-more" class="af-new-add" onclick="loadNoArticle()"><small>一切皆有尽头！</small></div>`
-  }
-}
+// // 预载下一页文章，存为本地数据 nextArticle
+// function fetchNextArticle(){
+//   var start = document.getElementsByClassName('af-article').length
+//   var end = start + fcdata.stepnumber
+//   var articleNum = article_num;
+//   if(end > articleNum){
+//     end = articleNum
+//   }
+//   if(start <  articleNum){
+//     UrlNow = localStorage.getItem("urlNow")
+//     var fetchUrl = UrlNow+"rule="+sortNow+"&start="+start+"&end="+end
+//     //console.log(fetchUrl)
+//     fetch(fetchUrl)
+//       .then(res => res.json())
+//       .then(json =>{
+//         var nextArticle = eval(json.article_data);
+//         console.log("已预载"+"?rule="+sortNow+"&start="+start+"&end="+end)
+//         localStorage.setItem("nextArticle",JSON.stringify(nextArticle))
+//     })
+//   }else if(start = articleNum){
+//       document.getElementById('af-more').outerHTML = `<div id="af-more" class="af-new-add" onclick="loadNoArticle()"><small>一切皆有尽头！</small></div>`
+//   }
+// }
 // 显示下一页文章，从本地缓存 nextArticle 中获取
 function loadNextArticle(){
   var nextArticle = JSON.parse(localStorage.getItem("nextArticle"));
