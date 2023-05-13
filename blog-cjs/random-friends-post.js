@@ -1,7 +1,3 @@
-
-
-
-
 'use strict';
 var frdata = { apiurl: 'https://friend.corei9.pp.ua/', defaultFish: 100, hungryFish: 100 };
 if ('undefined' != typeof frdataUser) for (var key in frdataUser) frdataUser[key] && (frdata[key] = frdataUser[key]);
