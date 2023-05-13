@@ -54,7 +54,8 @@
   position: relative;
   padding: 0.8rem;
   padding-bottom: 0.4rem;
-  width: calc(50% - 12px);
+  height: 121px;
+  width: 322px;
   background: var(--anzhiyu-card-bg);
   border: var(--style-border-always);
 }
