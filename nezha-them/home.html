@@ -15,7 +15,7 @@
             <div v-for="server in group.data" :id="server.ID" class="ui card">
               <div class="content" v-if="server.Host" style="margin-top: 10px; padding-bottom: 5px">
                 <div class="header">
-                <i :class="server.Host.CountryCode + ' flag'"></i>&nbsp;<i v-if='server.Host.Platform == "darwin"'
+                  <img v-if="server.Host.CountryCode" style="border-radius: 50%;box-shadow:-1px -1px 2px #eee, 1px 1px 2px #000;width:19px;" :src="'https://cdn.staticfile.org/flag-icon-css/6.6.5/flags/1x1/'+server.Host.CountryCode + '.svg'" alt="国家"/>&nbsp;<i v-if='server.Host.Platform == "darwin"'
                     class="apple icon"></i><i v-else-if='isWindowsPlatform(server.Host.Platform)'
                     class="windows icon"></i><i v-else :class="'fl-' + getFontLogoClass(server.Host.Platform)"></i>
                   @#server.Name + (server.live?'':'[{{tr "Offline"}}]')#@
@@ -72,15 +72,6 @@
                         </div>
                       </div>
                     </div>
-                    <div class="three wide column">{{tr "DiskUsed"}}</div>
-                    <div class="thirteen wide column">
-                      <div :class="formatPercent(server.live,server.State.DiskUsed, server.Host.DiskTotal).class">
-                        <div class="bar"
-                          :style="formatPercent(server.live,server.State.DiskUsed, server.Host.DiskTotal).style">
-                          <small>@#parseInt(server.State?server.State.DiskUsed/server.Host.DiskTotal*100:0)#@%</small>
-                        </div>
-                      </div>
-                    </div>
                     <div class="three wide column">{{tr "NetSpeed"}}</div>
                     <div class="thirteen wide column">
                       <i class="arrow alternate circle down outline icon"></i>
@@ -95,6 +86,15 @@
                       &nbsp;
                       <i class="arrow circle up icon"></i>
                       @#formatByteSize(server.State.NetOutTransfer)#@
+                    </div>
+                    <div class="three wide column">{{tr "DiskUsed"}}</div>
+                    <div class="thirteen wide column">
+                      <div :class="formatPercent(server.live,server.State.DiskUsed, server.Host.DiskTotal).class">
+                        <div class="bar"
+                          :style="formatPercent(server.live,server.State.DiskUsed, server.Host.DiskTotal).style">
+                          <small>@#parseInt(server.State?server.State.DiskUsed/server.Host.DiskTotal*100:0)#@%</small>
+                        </div>
+                      </div>
                     </div>
                     <div class="three wide column">信息</div>
                     <div class="thirteen wide column">
