@@ -12,7 +12,3 @@ https://raw.githubusercontents.com/kwxos/kwxos-back/main/Header-Editor/HE-Google
 ```
 https://raw.githubusercontents.com/kwxos/kwxos-back/main/Header-Editor/google-bing.json
 ```
-### 🎉 VPSroot 密码更改
-```
-wget -N https://raw.githubusercontents.com/kwxos/kwxos-back/main/VPSroot/root.sh && bash root.sh
-```
