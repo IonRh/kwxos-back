@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# 固定 swap 大小为 512MB
+SWAP=512
+
+# 计算新的 swap 大小（单位：KB）
+NEW=$((SWAP * 1024))
+TEMP="${NEW// / }"
+OLD="${TEMP:1}0"
+
+# 停止挂载 /proc/meminfo（如果已挂载）
+umount /proc/meminfo 2>/dev/null
+
+# 伪造内存信息并存储在一个临时文件中
+sed "/^Swap\(Total\|Free\):/s,$OLD,$NEW," /proc/meminfo > /etc/fake_meminfo
+
+# 绑定挂载伪造的 /proc/meminfo 文件
+mount --bind /etc/fake_meminfo /proc/meminfo
+
+# 显示伪造后的内存信息
+free -m
