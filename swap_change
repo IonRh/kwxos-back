@@ -1,5 +1,4 @@
 #!/bin/sh
-
 # 固定 swap 大小为 512MB
 SWAP=512
 
