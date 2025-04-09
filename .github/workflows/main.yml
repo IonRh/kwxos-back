@@ -47,7 +47,8 @@ jobs:
           mv nezha-agent npm_s390x
           rm nezha-agent_s390x.zip
 
-      - name: Delete existing new_zhav1 release if it exists
+      - name: Get or create new_zhav1 release
+        id: get-or-create-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -55,27 +56,33 @@ jobs:
           RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             https://api.github.com/repos/${{ github.repository }}/releases/tags/new_zhav1 | jq -r '.id // empty')
           
-          if [ ! -z "$RELEASE_ID" ]; then
-            # Delete the existing release
-            curl -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
-              https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID
-            # Delete the tag
-            git push origin --delete new_zhav1 || true
+          if [ -z "$RELEASE_ID" ]; then
+            # Create new release if it doesn't exist (as draft to avoid notification)
+            curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Content-Type: application/json" \
+              https://api.github.com/repos/${{ github.repository }}/releases \
+              -d '{"tag_name": "new_zhav1", "name": "Nezha Agent v${{ steps.get-version.outputs.version }}", "body": "Auto-updated Nezha Agent binaries", "draft": true}'
+            RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              https://api.github.com/repos/${{ github.repository }}/releases/tags/new_zhav1 | jq -r '.id')
           fi
+          echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
 
-      - name: Create new release with new_zhav1 tag
-        id: create-release
+      - name: Delete existing assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Create new release
-          curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Content-Type: application/json" \
-            https://api.github.com/repos/${{ github.repository }}/releases \
-            -d '{"tag_name": "new_zhav1", "name": "Nezha Agent v${{ steps.get-version.outputs.version }}", "body": "Auto-updated Nezha Agent binaries"}'
-          RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            https://api.github.com/repos/${{ github.repository }}/releases/tags/new_zhav1 | jq -r '.id')
-          echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
+          # Get list of assets for the release
+          ASSETS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }}/releases/${{ steps.get-or-create-release.outputs.release_id }}/assets)
+          
+          # Delete each asset (npm_amd64, npm_arm64, npm_s390x) if it exists
+          for ASSET_NAME in "npm_amd64" "npm_arm64" "npm_s390x"; do
+            ASSET_ID=$(echo "$ASSETS" | jq -r ".[] | select(.name == \"$ASSET_NAME\") | .id // empty")
+            if [ ! -z "$ASSET_ID" ]; then
+              curl -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
+                https://api.github.com/repos/${{ github.repository }}/releases/assets/$ASSET_ID
+            fi
+          done
 
       - name: Upload amd64 asset
         env:
@@ -84,7 +91,7 @@ jobs:
           curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/octet-stream" \
             --data-binary @npm_amd64 \
-            "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create-release.outputs.release_id }}/assets?name=npm_amd64"
+            "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.get-or-create-release.outputs.release_id }}/assets?name=npm_amd64"
 
       - name: Upload arm64 asset
         env:
@@ -93,7 +100,7 @@ jobs:
           curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/octet-stream" \
             --data-binary @npm_arm64 \
-            "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create-release.outputs.release_id }}/assets?name=npm_arm64"
+            "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.get-or-create-release.outputs.release_id }}/assets?name=npm_arm64"
 
       - name: Upload s390x asset
         env:
@@ -102,4 +109,4 @@ jobs:
           curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/octet-stream" \
             --data-binary @npm_s390x \
-            "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create-release.outputs.release_id }}/assets?name=npm_s390x"
+            "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.get-or-create-release.outputs.release_id }}/assets?name=npm_s390x"
