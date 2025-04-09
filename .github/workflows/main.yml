@@ -1,0 +1,76 @@
+name: Update Nezha Agent Releases
+
+on:
+  schedule:
+    - cron: '0 0 1 * *' # 每月1日0点运行
+  workflow_dispatch: # 支持手动触发
+
+jobs:
+  update-nezha-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 需要完整历史以操作标签
+
+      - name: 设置 Git
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+
+      - name: 获取最新 Nezha 代理版本
+        id: get-version
+        run: |
+          # 从 nezhahq/agent 获取最新发布标签
+          LATEST_TAG=$(curl -s https://api.github.com/repos/nezhahq/agent/releases/latest | jq -r '.tag_name')
+          echo "最新 Nezha 代理版本: $LATEST_TAG"
+          echo "version=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+      - name: 创建 releases 目录
+        run: mkdir -p releases
+
+      - name: 下载并处理 amd64 版本
+        run: |
+          VERSION=${{ steps.get-version.outputs.version }}
+          URL="https://github.com/nezhahq/agent/releases/download/$VERSION/nezha-agent_linux_amd64.zip"
+          curl -L -o nezha-agent_amd64.zip "$URL"
+          unzip -o nezha-agent_amd64.zip -d releases/
+          mv releases/nezha-agent releases/npm_amd64
+          rm nezha-agent_amd64.zip
+
+      - name: 下载并处理 arm64 版本
+        run: |
+          VERSION=${{ steps.get-version.outputs.version }}
+          URL="https://github.com/nezhahq/agent/releases/download/$VERSION/nezha-agent_linux_arm64.zip"
+          curl -L -o nezha-agent_arm64.zip "$URL"
+          unzip -o nezha-agent_arm64.zip -d releases/
+          mv releases/nezha-agent releases/npm_arm64
+          rm nezha-agent_arm64.zip
+
+      - name: 下载并处理 s390x 版本
+        run: |
+          VERSION=${{ steps.get-version.outputs.version }}
+          URL="https://github.com/nezhahq/agent/releases/download/$VERSION/nezha-agent_linux_s390x.zip"
+          curl -L -o nezha-agent_s390x.zip "$URL"
+          unzip -o nezha-agent_s390x.zip -d releases/
+          mv releases/nezha-agent releases/npm_s390x
+          rm nezha-agent_s390x.zip
+
+      - name: 提交并推送更改
+        run: |
+          git add releases/
+          git commit -m "更新 Nezha 代理文件到 ${{ steps.get-version.outputs.version }}"
+          git push
+
+      - name: 更新或创建 new_zhav1 标签
+        run: |
+          # 检查 new_zhav1 标签是否已存在
+          if git rev-parse new_zhav1 >/dev/null 2>&1; then
+            # 如果存在，强制更新标签
+            git tag -f new_zhav1
+          else
+            # 如果不存在，创建新标签
+            git tag new_zhav1
+          fi
+          git push origin new_zhav1 --force
