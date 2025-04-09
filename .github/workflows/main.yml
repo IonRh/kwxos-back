@@ -2,94 +2,75 @@ name: Update Nezha Agent Releases
 
 on:
   schedule:
-    - cron: '0 0 1 * *' # Runs at 00:00 on the 1st of every month
-  workflow_dispatch: # Allows manual triggering
+    - cron: '0 0 1 * *' # 每月1日0点运行
+  workflow_dispatch: # 支持手动触发
 
 jobs:
   update-nezha-agent:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: 检出仓库
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 需要完整历史以操作标签
 
-      - name: Get latest Nezha agent version
+      - name: 设置 Git
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+
+      - name: 获取最新 Nezha 代理版本
         id: get-version
         run: |
-          # Fetch the latest release tag from nezhahq/agent
+          # 从 nezhahq/agent 获取最新发布标签
           LATEST_TAG=$(curl -s https://api.github.com/repos/nezhahq/agent/releases/latest | jq -r '.tag_name')
-          echo "Latest Nezha agent version: $LATEST_TAG"
+          echo "最新 Nezha 代理版本: $LATEST_TAG"
           echo "version=$LATEST_TAG" >> $GITHUB_OUTPUT
 
-      - name: Download and process amd64 version
+      - name: 创建 releases 目录
+        run: mkdir -p releases
+
+      - name: 下载并处理 amd64 版本
         run: |
           VERSION=${{ steps.get-version.outputs.version }}
           URL="https://github.com/nezhahq/agent/releases/download/$VERSION/nezha-agent_linux_amd64.zip"
           curl -L -o nezha-agent_amd64.zip "$URL"
-          unzip -o nezha-agent_amd64.zip
-          mv nezha-agent npm_amd64
+          unzip -o nezha-agent_amd64.zip -d releases/
+          mv releases/nezha-agent releases/npm_amd64
           rm nezha-agent_amd64.zip
 
-      - name: Download and process arm64 version
+      - name: 下载并处理 arm64 版本
         run: |
           VERSION=${{ steps.get-version.outputs.version }}
           URL="https://github.com/nezhahq/agent/releases/download/$VERSION/nezha-agent_linux_arm64.zip"
           curl -L -o nezha-agent_arm64.zip "$URL"
-          unzip -o nezha-agent_arm64.zip
-          mv nezha-agent npm_arm64
+          unzip -o nezha-agent_arm64.zip -d releases/
+          mv releases/nezha-agent releases/npm_arm64
           rm nezha-agent_arm64.zip
 
-      - name: Download and process s390x version
+      - name: 下载并处理 s390x 版本
         run: |
           VERSION=${{ steps.get-version.outputs.version }}
           URL="https://github.com/nezhahq/agent/releases/download/$VERSION/nezha-agent_linux_s390x.zip"
           curl -L -o nezha-agent_s390x.zip "$URL"
-          unzip -o nezha-agent_s390x.zip
-          mv nezha-agent npm_s390x
+          unzip -o nezha-agent_s390x.zip -d releases/
+          mv releases/nezha-agent releases/npm_s390x
           rm nezha-agent_s390x.zip
 
-      - name: Create or update release with new_zhav1 tag
-        id: create-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 提交并推送更改
         run: |
-          # Check if release with tag new_zhav1 exists
-          RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            https://api.github.com/repos/${{ github.repository }}/releases/tags/new_zhav1 | jq -r '.id // empty')
-          
-          if [ -z "$RELEASE_ID" ]; then
-            # Create new release if it doesn't exist
-            curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
-              -H "Content-Type: application/json" \
-              https://api.github.com/repos/${{ github.repository }}/releases \
-              -d '{"tag_name": "new_zhav1", "name": "Nezha Agent v${{ steps.get-version.outputs.version }}", "body": "Auto-updated Nezha Agent binaries"}'
-            RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-              https://api.github.com/repos/${{ github.repository }}/releases/tags/new_zhav1 | jq -r '.id')
+          git add releases/
+          git commit -m "更新 Nezha 代理文件到 ${{ steps.get-version.outputs.version }}"
+          git push
+
+      - name: 更新或创建 new_zhav1 标签
+        run: |
+          # 检查 new_zhav1 标签是否已存在
+          if git rev-parse new_zhav1 >/dev/null 2>&1; then
+            # 如果存在，强制更新标签
+            git tag -f new_zhav1
+          else
+            # 如果不存在，创建新标签
+            git tag new_zhav1
           fi
-          echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
-
-      - name: Upload amd64 asset
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Content-Type: application/octet-stream" \
-            --data-binary @npm_amd64 \
-            "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create-release.outputs.release_id }}/assets?name=npm_amd64"
-
-      - name: Upload arm64 asset
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Content-Type: application/octet-stream" \
-            --data-binary @npm_arm64 \
-            "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create-release.outputs.release_id }}/assets?name=npm_arm64"
-
-      - name: Upload s390x asset
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Content-Type: application/octet-stream" \
-            --data-binary @npm_s390x \
-            "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create-release.outputs.release_id }}/assets?name=npm_s390x"
+          git push origin new_zhav1 --force
